@@ -1,0 +1,524 @@
+CREATE TABLE SANPHAM
+
+(
+	MASP CHAR(10) NOT NULL,
+	TENSP NVARCHAR2(50),
+	HTHUC_DONGGOI NVARCHAR2(50),
+	SLTON INT ,
+	TENLOAISP NVARCHAR2(50),
+	TINHTRANG NVARCHAR2(50),
+	HINHANH VARCHAR(50),
+	CONSTRAINT PK_SANPHAM PRIMARY KEY (MASP)
+)
+
+CREATE TABLE KHACHHANG
+(
+	MAKH CHAR(10)NOT NULL,
+	TENKH NVARCHAR2 (30),
+	DIACHI NVARCHAR2(30),
+	DIENTHOAI CHAR(11)NOT NULL,
+	NAMSINH INT,
+	GIOITINH NVARCHAR2 (4)NOT NULL,
+	CONSTRAINT PK_KHACHHANG PRIMARY KEY (MAKH)
+)
+CREATE TABLE NHANVIEN
+(
+	MANV CHAR(10)NOT NULL,
+	TENNV NVARCHAR2(30),
+	DIACHI NVARCHAR2(30),
+	NAMSINH INT,
+	GIOITINH NVARCHAR2 (4)NOT NULL,
+	CONSTRAINT PK_NHANVIEN PRIMARY KEY(MANV)
+)
+
+CREATE TABLE HOADON
+(
+	MAHD CHAR(10)NOT NULL,
+	MAKH CHAR(10)NOT NULL,
+	MANV CHAR(10)NOT NULL,
+	NGAYLAP DATE,
+	TONGTIEN NUMBER(9,3),
+	CONSTRAINT PK_HOADON PRIMARY KEY(MAHD),
+	CONSTRAINT FK_HOADON_KHACHHANG FOREIGN KEY (MAKH) REFERENCES KHACHHANG(MAKH),
+	CONSTRAINT FK_HOADON_NHANVIEN FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV)
+)
+CREATE TABLE CTHOADON
+(
+	MAHD CHAR(10) NOT NULL,
+	MASP CHAR(10)NOT NULL,
+	SOLUONG INT,
+	GIABAN NUMBER(9,3),
+	THANHTOAN NUMBER(9,3),
+	CONSTRAINT PK_CTHOADON PRIMARY KEY(MAHD,MASP),
+	CONSTRAINT FK_CTHOADON_HOADON FOREIGN KEY (MAHD)REFERENCES HOADON(MAHD),
+	CONSTRAINT FK_CTHOADON_SANPHAM FOREIGN KEY (MASP)REFERENCES SANPHAM(MASP)
+)
+
+--Ràng buộc check
+ALTER TABLE CTHOADON
+ADD CONSTRAINT CK_SL CHECK(SOLUONG>0)
+
+ALTER TABLE KHACHHANG
+ADD CONSTRAINT CK_GT CHECK (GIOITINH = N'Nam' OR GIOITINH = N'Nữ')
+
+--Ràng buộc mặc định
+ALTER TABLE NHANVIEN
+ADD CONSTRAINT CK_GTNV CHECK (GIOITINH = N'Nam' OR GIOITINH= N'Nữ'),
+CONSTRAINT DEF_GT DEFAULT N'Nam' FOR GIOITINH
+
+
+ALTER TABLE KHACHHANG
+ADD CONSTRAINT DEF_DC DEFAULT N'TP.HCM' FOR DIACHI
+
+--Ràng buộc unique
+
+ALTER TABLE KHACHHANG
+ADD CONSTRAINT UNI_SDT UNIQUE(DIENTHOAI)
+--
+INSERT INTO KHACHHANG
+VALUES
+('KH01',N'LÊ MINH TOÀN','TPHCM','0934214565','2000',N'Nam');
+INSERT INTO KHACHHANG
+VALUES
+('KH02',N'TRẦN THỊ THU THỦY',N'ĐỒNG NAI','0948571923','1998',N'Nữ');
+INSERT INTO KHACHHANG
+VALUES
+('KH03',N'NGUYỄN THÙY LINH',N'BÌNH DƯƠNG','0912859432','2002',N'Nữ');
+INSERT INTO KHACHHANG
+VALUES
+('KH04',N'BÙI LÂM ANH',N'GIA LAI','0968492918','1999',N'Nam');
+INSERT INTO KHACHHANG
+VALUES
+('KH05',N'ĐOÀN VĂN HẬU',N'HÀ NỘI','0912647592','1999',N'Nam');
+INSERT INTO KHACHHANG
+VALUES
+('KH06',N'NGUYỄN THÙY DƯƠNG',N'PHÚ YÊN','0998905903','2000',N'Nữ');
+INSERT INTO KHACHHANG
+VALUES
+('KH07',N'QUÁCH TUẤN NGỌC',N'NAM ĐỊNH','0919090982','1995',N'Nam');
+INSERT INTO KHACHHANG
+VALUES
+('KH08',N'LÊ THÙY NA',N'PHÚ YÊN','0989090761','2001',N'Nữ');
+INSERT INTO KHACHHANG
+VALUES
+('KH09',N'TRẦN CÔNG MINH',N'BÌNH PHƯỚC','0950201045','1997',N'Nam');
+INSERT INTO KHACHHANG
+VALUES
+('KH10',N'NGUYỄN THỊ THÚY','TPHCM','0989090976','1994',N'Nữ');
+
+INSERT INTO NHANVIEN
+VALUES
+('NV01',N'TRẦN MINH NGỌC','TPHCM','2000',N'Nam');
+INSERT INTO NHANVIEN
+VALUES
+('NV02',N'TRẦN THỊ THUÝ',N'ĐỒNG THÁP','1992',N'Nữ');
+INSERT INTO NHANVIEN
+VALUES
+('NV03',N'NGUYỄN THÙY DUNG',N'LONG AN','1996',N'Nữ');
+INSERT INTO NHANVIEN
+VALUES
+('NV04',N'LÊ LONG AN',N'BÌNH THUẬN','1998',N'Nam');
+INSERT INTO NHANVIEN
+VALUES
+('NV05',N'ĐOÀN NGỌC CHÂU',N'HÀ NỘI','2000',N'Nam');
+INSERT INTO NHANVIEN
+VALUES
+('NV06',N'BÙI THÚY KIỀU',N'LÂM ĐỒNG','2000',N'Nữ');
+INSERT INTO NHANVIEN
+VALUES
+('NV07',N'QUÁCH MINH LONG',N'TPHCM','1995',N'Nam');
+INSERT INTO NHANVIEN
+VALUES
+('NV08',N'LÊ THÚY VÂN',N'BÌNH DƯƠNG','1997',N'Nữ');
+INSERT INTO NHANVIEN
+VALUES
+('NV09',N'TRẦN CÔNG NHỰT',N'ĐÀ NẴNG','1999',N'Nam');
+INSERT INTO NHANVIEN
+VALUES
+('NV10',N'NGUYỄN NGỌC LAN','TPHCM','1994',N'Nữ');
+INSERT INTO HOADON
+VALUES
+('HD01','KH05','NV03',TO_DATE('25 August 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD02','KH02','NV06',TO_DATE('11 September 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD03','KH09','NV09',TO_DATE('15 January 2021','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD04','KH05','NV06',TO_DATE('15 March 2021','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD05','KH03','NV05',TO_DATE('29 October 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD06','KH02','NV04',TO_DATE('5 January 2021','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD07','KH10','NV10',TO_DATE('21 August 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD08','KH03','NV01',TO_DATE('29 June 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD09','KH04','NV06',TO_DATE('20 September 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD10','KH06','NV06',TO_DATE('2 October 2020','DD Month YYYY'),0);
+INSERT INTO HOADON
+VALUES
+('HD11','KH06','NV06',TO_DATE('21 August 2020','DD Month YYYY'),0);
+
+INSERT INTO SANPHAM
+VALUES
+('SP01',N'SỮA TƯƠI',N'HỘP',50,N'NƯỚC UỐNG','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP02',N'BIA HENIKEN',N'CHAI',30,N'NƯỚC UỐNG','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP03',N'BÁNH ORIO',N'HỘP',20,N'THỨC ĂN','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP04',N'STING',N'CHAI',60,N'NƯỚC UỐNG','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP05',N'MÌ HẢO HẢO',N'GÓI',20,N'THỨC ĂN','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP06',N'XÚC XÍCH',N'GÓI',70,N'THỨC ĂN',N'CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP07',N'CAFE TRUNG NGUYÊN',N'GÓI',20,N'NƯỚC UỐNG','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP08',N'NƯỚC SUỐI',N'CHAI',20,N'NƯỚC UỐNG',N'CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP09',N'KẸO TRÁI CÂY',N'GÓI',10,N'THỨC ĂN','CÒN HÀNG',null);
+INSERT INTO SANPHAM
+VALUES
+('SP10',N'BÁNH DANISA',N'HỘP',50,N'THỨC ĂN','CÒN HÀNG',null);
+
+INSERT INTO CTHOADON
+VALUES
+('HD01','SP10',10,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD01','SP03',10,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD02','SP03',30,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD03','SP04',65,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD04','SP01',10,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD05','SP02',10,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD06','SP05',20,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD07','SP06',20,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD08','SP08',10,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD09','SP09',25,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD10','SP07',40,0,0);
+INSERT INTO CTHOADON
+VALUES
+('HD11','SP06',30,0,0);
+
+--
+
+-- procedure thêm nv
+create or replace procedure themnv 
+(mavn IN char,  
+tenv IN VARCHAR2,
+diachi IN VARCHAR2,
+namsinh IN number,
+gioitinh IN VARCHAR2)  
+is  
+begin  
+insert into nhung.NHANVIEN values(mavn,tenv,diachi,namsinh,gioitinh);  
+end;
+select * from nhung.NHANVIEN
+
+execute sys.themnv('NV13','Vo Van Tin','GIA LAI',2001,'Nam');
+drop procedure updNV 
+create or replace procedure updNV
+(mnv IN char,  
+tnv IN VARCHAR2,
+dc IN VARCHAR2,
+ns IN number,
+gt IN VARCHAR2)  
+is  
+begin  
+update nhung.NHANVIEN set TENNV = tnv,DIACHI=dc,NAMSINH=ns,GIOITINH = gt where MANV=mnv;  
+end;
+
+execute updNV('NV015','Vo Van Tin','GIA LAI',2001,'Nam');
+SELECT MANV FROM NHUNG.NHANVIEN WHERE MANV='NV017'
+
+
+create or replace procedure xoaNV 
+(mnv IN char)  
+is  
+begin  
+delete from nhung.NHANVIEN where MANV=mnv;  
+end;
+execute xoaNV ('NV016')
+commit;
+grant execute on dbo.themNV to NHUNG 
+grant execute any procedure to NHUNG
+commit;
+GRANT EXECUTE ON xoanv TO QUANLY;
+grant connect to QUANLY
+
+GRANT ALL PRIVILEGES TO QUANLY;
+select grantee , privilege , admin_option from dba_sys_privs
+select DISTINCT grantee  from dba_sys_privs
+CREATE ROLE QUANLY
+
+--trigger
+DROP TABLE audit_nhanvien
+create table audit_nhanvien (
+user_name varchar2(30),
+time_stamp date,
+manv CHar(10),
+old_name nvarchar2(30),
+new_name nvarchar2(30),
+old_diachi nvarchar2(30),
+new_diachi nvarchar2(30),
+old_namsinh int,
+new_namsinh int,
+old_gioitinh nvarchar2(4),
+new_gioitinh nvarchar2(4)
+)
+DROP TRIGGER audit_nhanvien_values
+create or replace trigger audit_nhanvien_values
+after delete or insert or update on NHUNG.NHANVIEN
+for each row
+begin
+    insert into audit_nhanvien(user_name,time_stamp,manv,old_name,
+                                new_name,old_diachi,new_diachi,
+                                old_namsinh,new_namsinh,
+                                old_gioitinh,new_gioitinh
+                                )
+    values(USER,SYSDATE, :OLD.MANV, :OLD.TENNV, :NEW.TENNV, :OLD.DIACHI, :NEW.DIACHI,
+           :OLD.NAMSINH, :NEW.NAMSINH, :OLD.GIOITINH, :NEW.GIOITINH);
+END;
+SELECT * FROM AUDIT_nhanvien
+SELECT * FROM NHUNG.NHANVIEN
+inSERT INTO NHUNG.NHANVIEN VALUES('NV11','VO VAN TIN','GL',2001,'NAM')
+grant insert on NHUNG.NHANVIEN to HR    
+ --
+drop trigger capnhat_thanhtoan
+create or replace trigger capnhat_thanhtoan
+after  insert on NHUNG.CTHOADON
+for each row
+begin
+    UPDATE NHUNG.CTHOADON 
+    SET THANHTOAN = GIABAN*SOLUONG
+    WHERE MAHD = :NEW.MAHD and MASP =:NEW.MASP ;
+    
+    UPDATE NHUNG.HOADON
+    SET TONGTIEN = (SELECT SUM(THANHTOAN)
+						FROM NHUNG.CTHOADON CT
+						WHERE CT.MAHD =:NEW.MAHD)
+    WHERE MAHD = :NEW.MAHD ;
+END;
+update NHUNG.CTHOADON SET THANHTOAN = 50000 WHERE MAHD = 'HD05' AND MASP = 'SP02'
+select * from NHUNG.HOADON
+select * from NHUNG.CTHOADON
+insert into NHUNG.CTHOADON values('HD05','SP01','LO03',10,6000,0)
+
+--
+create table log_trig_table
+(
+user_id varchar2(20),
+log_date date,
+action varchar2(20)
+)
+DROP TRIGGER logon_trig
+--
+CREATE OR REPLACE TRIGGER logon_trig
+AFTER LOGON ON SCHEMA
+BEGIN
+    INSERT INTO log_trig_table(user_id,log_date,action)
+    VALUES(USER,SYSDATE,'LOGGING ON');
+END;
+--
+CREATE OR REPLACE TRIGGER logoff_trig
+AFTER LOGON ON SCHEMA
+BEGIN
+    INSERT INTO log_trig_table(user_id,log_date,action)
+    VALUES(USER,SYSDATE,'LOGGING OFF');
+END;
+--
+SELECT * FROM log_trig_table
+
+--FUNC
+CREATE OR REPLACE FUNCTION get_thanhtoan
+(p_mahd NHUNG.HOADON.MAHD%TYPE) RETURN NUMBER IS
+v_money NHUNG.HOADON.TONGTIEN%TYPE :=0;
+BEGIN
+    SELECT TONGTIEN
+    INTO v_money
+    FROM NHUNG.HOADON
+    WHERE MAHD=p_mahd;
+    RETURN v_money;
+END get_thanhtoan;
+
+SET SERVEROUTPUT ON;
+
+execute DBMS_OUTPUT.PUT_LINE(get_thanhtoan('HD11'))
+
+-- procdure hệ thống 
+--gan Quyen he thong
+create or replace procedure ganquyenht(quyen IN char, userr IN char)  
+is
+s varchar(200);
+begin  
+   s:= 'grant '||quyen||' to '||userr||'';
+   execute immediate(s);
+  commit;
+end;
+
+select * from dba_users;
+grant create session to tinne;
+exec ganquyenht('CREATE SESSION','TINNE');
+--thu hoi quyen he thong
+create or replace procedure thuhoiquyenht(quyen IN char, userr IN char)  
+is
+s varchar(200);
+begin  
+   s:= 'revoke '||quyen||' from '||userr||'';
+   execute immediate(s);
+  commit;
+end;
+
+
+select * from dba_users;
+exec thuhoiquyenht('Create Session','TINNE');
+
+-- gan quyen doi tuong
+create or replace procedure ganquyendt(quyen IN char,bang in char, userr IN char)  
+is
+s varchar(200);
+begin  S
+   s:= 'grant '||quyen||' on TINCUTE.'||bang||' to '||userr||'';
+   execute immediate(s);
+  commit;
+end;
+
+select * from dba_users;
+exec ganquyendt('SELECT','HOADON','TINNE4');
+
+--thu hoi quyen doi tuong
+create or replace procedure thuhoiquyendt(quyen IN char,bang in char, userr IN char)  
+is
+s varchar(200);
+begin  
+   s:= 'revoke '||quyen||' on TINCUTE.'||bang||' from '||userr||'';
+   execute immediate(s);
+  commit;
+end;
+
+select * from dba_users;
+exec thuhoiquyendt('SELECT','NHANVIEN','TINNE');
+
+-- xem audit
+create or replace procedure xemaudit  
+is
+s varchar(200);
+begin  
+   s:= 'SELECT * FROM SYS.fga_log$ WHERE ntimestamp# > SYSDATE-1 ORDER BY ntimestamp# DESC';
+   execute immediate(s);
+  commit;
+end;
+
+SELECT * FROM SYS.fga_log$ WHERE ntimestamp# > SYSDATE-1 ORDER BY ntimestamp# DESC
+-- tao user
+CREATE OR REPLACE PROCEDURE createUser(
+      pi_username IN NVARCHAR2,
+	  pi_password IN NVARCHAR2,
+      pi_space IN NVARCHAR2,
+      pi_quota IN NVARCHAR2,
+      pi_profile IN NVARCHAR2) IS
+	
+    user_name NVARCHAR2(20)  	:= pi_username;
+    pwd NVARCHAR2(20) 		:= pi_password;
+    space NVARCHAR2(20) 	:= pi_space;
+    quota NVARCHAR2(20) 	:= pi_quota;
+    profile NVARCHAR2(20) 	:=pi_profile;
+   	lv_stmt   VARCHAR2 (1000);
+BEGIN
+        lv_stmt := 'CREATE USER ' || user_name || ' IDENTIFIED BY ' || pwd ||
+                ' ACCOUNT UNLOCK DEFAULT TABLESPACE ' || space || ' QUOTA ' ||
+                quota || ' ON ' || space || ' TEMPORARY TABLESPACE temp QUOTA 5M ON system';
+
+        EXECUTE IMMEDIATE ( lv_stmt ); 
+        lv_stmt := 'ALTER USER ' || user_name || ' PROFILE ' || profile;
+        
+        EXECUTE IMMEDIATE ( lv_stmt );
+        -- **** Object: Roles for user ****
+        lv_stmt := 'GRANT RESOURCE, CONNECT TO ' || user_name;
+
+        EXECUTE IMMEDIATE ( lv_stmt );
+                                                
+        -- **** Object: System privileges for user ****
+        lv_stmt := 'GRANT ALTER SESSION,
+	       	    	  CREATE ANY TABLE,
+	       	    	  CREATE CLUSTER,
+	            	  CREATE DATABASE LINK,
+	            	  CREATE MATERIALIZED VIEW,
+                      CREATE SYNONYM,
+                      CREATE TABLE,
+                      CREATE VIEW,
+                      CREATE SESSION,
+                      UNLIMITED TABLESPACE
+	       	    TO ' || user_name;
+
+        EXECUTE IMMEDIATE ( lv_stmt ); 
+	COMMIT;
+END createUser;
+EXEC createUser('ABC','123','USERS','Unlimited','KHACHHANG');
+--session
+create or replace procedure killsession(sidid in v$session.sid%type,serial in v$session.serial#%type)  
+is
+s varchar(200);
+begin  
+   s:= 'alter system kill session '''|| sidid || ','|| serial ||'''';
+   execute immediate(s);
+  commit;
+end;
+
+select * from v$session where type != 'BACKGROUND'
+exec killsession('183','58067')
+alter system kill session '183,36523'
+
+select * from DBA_ROLE_PRIVS
+grant select on TINCUTE.NHANVIEN to QUANLY;
+select * from role_role_privs
+select * from role_tab_privs where role = 'QUANLY'
+create role quanly
+select username from dba_users
+grant create session to TINNE4
+GRANT EXECUTE on sys.themnv TO TINNE4;
+alter user TINNE4 identified by VOvantin0123$$
+select grantee , privilege , admin_option from dba_sys_privs where grantee = 'TINNE3' order by grantee
+SELECT USERNAME,PASSWORD_VERSIONS,Profile FROM DBA_USERS order by USERNAME
+Select profile from dba_profiles group by profile
+SELECT ROLE FROM DBA_ROLES WHERE COMMON = 'NO'
+alter user tinnnnnnn identified by 123 account unlock profile NHANVIEN;
+ALTER USER tinnnnnnn PROFILE NHANVIEN
